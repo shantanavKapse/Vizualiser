@@ -1,0 +1,224 @@
+{% extends 'base.html' %}
+
+{% block title %}Vizualiser | Dashboard {{dashboard_name}}{% endblock %}
+
+{% block css %}
+<style>
+    .active-form {
+        display: block !important;
+    }
+</style>
+
+{% endblock %}
+
+{% block body %}
+<div class="container min-vh-100">
+    <div class="row mt-5">
+        <div class="col-3 p-0" style="height: 75vh;">
+            <ul class="graphUl list-group">
+                {% for k in comps %}
+                    <li class="component list-group-item text-decoration-none text-white rounded-pill m-2" onclick="showComponent(event)" data-div_id="{{k.id}}" style="cursor: pointer;">{{k.name|capitalize}}
+                        <a href="/delete-comp/{{dashboard_name}}/{{k.id}}" class="text-light" style="float: right;"><i class="bi bi-trash"></i></a></li>
+                {% endfor %}
+            </ul>
+            <!-- Button trigger modal -->
+            <div class="text-center mt-4">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                    Add Graph
+                </button>
+
+                <!-- Modal -->
+                <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"
+                    tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Graph</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+<!--                                <form action="">-->
+<!--                                    -->
+<!--                                </form>-->
+
+
+                                <div class="bar mt-4">
+                                    <form action="" method="post" class="graphForm g-5">
+                                        <select name="chart-type" class="form-select rounded-5 mt-2" id="chart-type" onchange="checkScatter()">
+                                            <option value="-1" selected>Choose Graph</option>
+                                            <option value="1">Bar Graph</option>
+                                            <option value="2">Scatter Plot</option>
+                                            <option value="3">Pie chart</option>
+                                            <option value="4">Histogram</option>
+                                            <option value="5">Violin Plot</option>
+<!--                                            <option value="6">Word Cloud</option>-->
+                                            <option value="6">Box Plot</option>
+                                            <option value="7">Line Plot</option>
+                                        </select>
+                                        <div class="form-check form-switch d-none my-3 d-flex justify-content-center">
+                                            <input class="form-check-input mx-3" name="add_regression" type="checkbox" role="switch" id="addRegression">
+                                            <label class="form-check-label" for="addRegression">Add regression line</label>
+                                          </div>
+                                        <select name="x-col" class="form-select mt-2 rounded-5" aria-label="Default select example">
+                                            <option selected>Select column for x-axis</option>
+                                            {% for c in cols %}
+                                            <option value="{{c}}">{{c}}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <select name="y-col" id="y-col" class="form-select mt-2 rounded-5" aria-label="Default select example">
+                                            <option selected>Select column for y-axis</option>
+                                            {% for c in num_cols %}
+                                            <option value="{{c}}">{{c}}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <input name="title" class="form-control mt-2 rounded-5 " type="text" placeholder="Enter the title for graph">
+<!--                                        <input name="x-label" class="form-control mt-2 rounded-5 " type="text" placeholder="Enter label for x-axis">-->
+<!--                                        <input name="y-label" class="form-control mt-2 rounded-5 " type="text" placeholder="Enter label for y-axis">-->
+
+                                        <select name="color" class="form-select mt-2 rounded-5" aria-label="Default select example">
+                                            <option value="0" selected>Select color as a parameter (optional)</option>
+                                            {% for c in cat_cols %}
+                                            <option value="{{c}}">{{c}}</option>
+                                            {% endfor %}
+                                        </select>
+
+                                        <button type="submit" class="addBtn btn btn-primary mt-3">Add</button>
+                                    </form>
+                                </div>
+
+
+<!--                                <div class="scatter mt-4" style="display: none;">-->
+<!--                                    <form action="" class="graphForm" onsubmit="addGraph()">-->
+<!--                                        <input type="hidden" name="chart-type" value="scatter">-->
+<!--                                        <input class="form-control mt-2 rounded-5" type="text" placeholder="Enter the title for scatter plot" required>-->
+<!--                                        <input class="form-control mt-2 rounded-5" type="text" placeholder="Enter lable for x-axis" required>-->
+<!--                                        <input class="form-control mt-2 rounded-5" type="text" placeholder="Enter label for y-axis" required>-->
+<!--                                        <select required class="form-select mt-2 rounded-5" aria-label="Default select example">-->
+<!--                                            <option selected>Select column for x-axis</option>-->
+<!--                                        </select>-->
+<!--                                        <select required class="form-select mt-2 rounded-5" aria-label="Default select example">-->
+<!--                                            <option selected>Select column for y-axis</option>-->
+<!--                                        </select>-->
+<!--                                        <select class="form-select mt-2 rounded-5" aria-label="Default select example">-->
+<!--                                            <option selected>Select color</option>-->
+<!--                                        </select>-->
+<!--                                         <button  type="submit" class="addBtn btn btn-primary mt-3" [disabled] = "form.invalid">Add</button>-->
+<!--                                    </form>-->
+<!--                                </div>-->
+
+
+<!--                                <div class="pie mt-4" style="display: none;">-->
+<!--                                    <form action="" class="graphForm" onsubmit="addGraph()">-->
+<!--                                        <input type="hidden" name="chart-type" value="pie">-->
+<!--                                        <input class="form-control mt-2 rounded-5" type="text" placeholder="Enter the title for pie chart" required>-->
+<!--                                        <input class="form-control mt-2 rounded-5" type="text" placeholder="Enter Values" required>-->
+<!--                                        <input class="form-control mt-2 rounded-5" type="text" placeholder="Enter Names" required>-->
+<!--                                        <select required class="form-select mt-2 rounded-5" aria-label="Default select example">-->
+<!--                                            <option selected>Select column for Values</option>-->
+<!--                                        </select>-->
+<!--                                        <select required class="form-select mt-2 rounded-5" aria-label="Default select example">-->
+<!--                                            <option selected>Select column for Names</option>-->
+<!--                                        </select>-->
+<!--                                        <select class="form-select mt-2 rounded-5" aria-label="Default select example">-->
+<!--                                            <option selected>Select color</option>-->
+<!--                                        </select>-->
+<!--                                         <button  type="submit" class="addBtn btn btn-primary mt-3" [disabled] = "form.invalid">Add</button>-->
+<!--                                    </form>-->
+<!--                                </div>-->
+
+
+<!--                                <div class="histogram mt-4" style="display: none;">-->
+<!--                                    <form action="" class="graphForm" onsubmit="addGraph()">-->
+<!--                                        <input type="hidden" name="chart-type" value="histogram">-->
+<!--                                        <input class="form-control mt-2 rounded-5" type="text" placeholder="Enter the title for histogram" required>-->
+<!--                                        <input class="form-control mt-2 rounded-5" type="text" placeholder="Enter lable for x-axis" required>-->
+<!--                                        <select required class="form-select mt-2 rounded-5" aria-label="Default select example">-->
+<!--                                            <option selected>Select column for x-axis</option>-->
+<!--                                        </select>-->
+<!--                                         <button  type="submit" class="addBtn btn btn-primary mt-3" [disabled] = "form.invalid">Add</button>-->
+<!--                                    </form>-->
+
+<!--                                </div>-->
+
+
+<!--                                <div class="violin mt-4" style="display: none;">-->
+<!--                                    <form action="" class="graphForm" onsubmit="addGraph()">-->
+<!--                                        <input type="hidden" name="chart-type" value="violin">-->
+<!--                                        <input class="form-control mt-2 rounded-5" type="text" placeholder="Enter the title for violin graph" required>-->
+<!--                                        <input class="form-control mt-2 rounded-5" type="text" placeholder="Enter label for y-axis" required>-->
+<!--                                        <select required class="form-select mt-2 rounded-5" aria-label="Default select example">-->
+<!--                                            <option selected>Select column for y-axis</option>-->
+<!--                                        </select>-->
+<!--                                        <select class="form-select mt-2 rounded-5" aria-label="Default select exapmle">-->
+<!--                                            <option selected>Display Box inside graph (True or False)</option>-->
+<!--                                        </select>-->
+<!--                                        <select class="form-select mt-2 rounded-5" aria-label="Default select example">-->
+<!--                                            <option selected>Select color</option>-->
+<!--                                        </select>-->
+<!--                                         <button  type="submit" class="addBtn btn btn-primary mt-3" [disabled] = "form.invalid">Add</button>-->
+<!--                                    </form>-->
+
+<!--                                </div>-->
+
+
+<!--                                <div class="word-cloud mt-4" style="display: none;">-->
+<!--                                    <form action="" class="graphForm"  onsubmit="addGraph()">-->
+<!--                                        <input type="hidden" name="chart-type" value="word-cloud">-->
+<!--                                        <input class="form-control mt-2 rounded-5" type="text" placeholder="Enter the title for word cloud" required>-->
+<!--                                        <input class="form-control mt-2 rounded-5" type="text" placeholder="Text" required>-->
+<!--                                        <select required class="form-select mt-2 rounded-5" aria-label="Default select example">-->
+<!--                                            <option selected>Select Text</option>-->
+<!--                                        </select>-->
+<!--                                         <button  type="submit" class="addBtn btn btn-primary mt-3" [disabled] = "form.invalid">Add</button>-->
+<!--                                    </form>-->
+
+<!--                                </div>-->
+
+
+<!--                                <div class="box-plot mt-4" style="display: none;">-->
+<!--                                    <form action="" class="graphForm" onsubmit="addGraph()">-->
+<!--                                        <input type="hidden" name="chart-type" value="box-plot">-->
+<!--                                        <input class="form-control mt-2 rounded-5" class="form-control" type="text" placeholder="Enter the title for box-plot" required>-->
+<!--                                        <input class="form-control mt-2 rounded-5" type="text" placeholder="Enter lable for x-axis" required>-->
+<!--                                        <input class="form-control mt-2 rounded-5" type="text" placeholder="Enter label for y-axis" required>-->
+<!--                                        <select required class="form-select mt-2 rounded-5" aria-label="Default select example">-->
+<!--                                            <option selected>Select column for x-axis</option>-->
+<!--                                        </select>-->
+<!--                                        <select required class="form-select mt-2 rounded-5" aria-label="Default select example">-->
+<!--                                            <option selected>Select column for y-axis</option>-->
+<!--                                        </select>-->
+<!--                                        <select class="form-select mt-2 rounded-5" aria-label="Default select example">-->
+<!--                                            <option selected>Select color</option>-->
+<!--                                        </select>-->
+<!--                                         <button  type="submit" class="addBtn btn btn-primary mt-3 mt-3" [disabled] = "form.invalid">Add</button>-->
+<!--                                    </form>-->
+
+<!--                                </div>-->
+                            </div>
+                            <!-- <div class="modal-footer">
+                                <button onclick="addGraph()" type="submit" class="addBtn btn btn-primary" [disabled] = "form.invalid">Add</button>
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+<!--        <div class="col-1 " style="height: 75vh;"></div>-->
+        <div class="col-9" id>
+            {% for c in comps %}
+                <div class="position-absolute overflow-scroll text-center border border-white overflow-auto rounded p-2 d-none" style="height: 75vh; background-color: #121212;" id="comp-{{c.id}}">
+                    {{c.data|safe}}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+{% block js %}
+<script>
+
+</script>
+{% endblock %}

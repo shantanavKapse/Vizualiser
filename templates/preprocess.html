@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Vizualiser | Preprocess{% endblock %}
+
+{% block body %}
+  <div class="container d-flex flex-column">
+    <h1 class="align-self-center my-5">Preprocessing {{dashboard_name}}...</h1>
+    <input type="hidden" name="dash-name" id="dashboard-name" value="{{dashboard_name}}">
+    <p>The below table shows the basic insights about all the columns in your dataset (such as mean, minimum value, maximum value, standard deviation and other statistics of each individual column)</p>
+    <div class="overflow-auto">
+      {{df_info|safe}}
+    </div>
+    <div class="preprocess-cont d-flex flex-column align-items-center my-5">
+      {% if null_col %}
+        <h3 class="fs-2 my-5 p-3 border border-light rounded-pill">Data Cleaning</h3>
+        <form action="/preprocess/{{dashboard_name}}" method="post" id="preprocess-form" class="my-5">
+          <table class="table">
+            <thead><tr><th>Column Name (with null values)</th><th>Total number of null values in column</th><th>Handle null values</th><th>Input value manually</th></tr></thead>
+            <tbody>
+              {% for c in null_col %}
+                <tr class="column-fill"><td>{{c.column}}</td><td>{{c.number_null}}</td>
+                  <td><input type="hidden" value="{{c.column}}" name="column-name[]" class="column-name"><select name="fill-value[]" class="fill-select" onchange="checkManualInput(event)">
+                  <option value="no-select">Select</option>
+                  <option value="back-fill">Fill with next valid value</option>
+                  <option value="front-fill">Fill with last valid value</option>
+                  <option value="remove-row">Remove null rows</option>
+                  <option value="user-entry">Enter fill value manually</option>
+                  {% if c.mean_fill %}
+                    <option value="mean-fill">Fill with mean of the column</option>
+                  {% endif %}
+                </select></td>
+                  <td><input type="text" disabled name="user-fill[]" class="manual-input"></td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </form>
+      {% endif %}
+      <div class="form-check form-switch fs-3">
+        <input class="form-check-input" type="checkbox" role="switch" onchange="toggleScaling()" id="addScaling" form="preprocess-form">
+        <label class="form-check-label" for="addScaling">Scale the Dataset</label>
+        <p></p>
+      </div>
+      <select name="scale-select" class="d-none my-3 rounded-pill p-3" id="scale-select" form="preprocess-form">
+        <option value="min-max">Min Max Scaler</option>
+        <option value="standard">Standard Scaler</option>
+      </select>
+      <button type="button" onclick="submitForm(event)" class="text-decoration-none text-white align-self-center my-4 bg-primary-subtle p-4 rounded-pill fs-5 border border-primary">Go To Dashboard</button>
+    </div>
+  </div>
+{% endblock %}

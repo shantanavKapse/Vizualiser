@@ -1,0 +1,32 @@
+body{
+    background-image: url('../img/background3.jpg');
+    background-attachment: fixed;
+    background-size: cover;
+}
+
+::-webkit-scrollbar{
+    width: 2px;
+    height: 2px;
+}
+
+
+#welcome-div{
+    height: 90vh !important;
+}
+
+#data-div{
+    max-height: 400px;
+}
+
+#data-div::-webkit-scrollbar {
+    width: 0;
+}
+
+.table-cols{
+    position: sticky;
+    top: 0;
+}
+
+.table-div{
+    height: 65vh;
+}

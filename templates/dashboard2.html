@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}Vizualiser | Dashboard {{dashboard_name}}{% endblock %}
+
+{% block css %}
+<style>
+    .active-form {
+        display: block !important;
+    }
+
+    .tab-pane{
+        max-height: 450px;
+        max-width: 700px;
+        overflow: scroll;
+    }
+</style>
+
+{% endblock %}
+
+{% block body %}
+
+  <div class="container d-flex flex-column justify-content-center align-items-center p-5">
+    <ul class="nav nav-tabs bg-primary rounded">
+      {% for k in comps %}
+        <li class="nav-item">
+          <button class="nav-link tabs" data-id="{{k.id}}" id="{{k.name}}-tab" data-bs-toggle="tab" data-bs-target="#comp-{{k.name}}" type="button" role="tab" aria-controls="comp-{{k.name}}" aria-selected="false">{{k.name|capitalize}}</button>
+        </li>
+      {% endfor %}
+    </ul>
+    <div class="tab-content">
+      {% for k in comps %}
+        <div class="tab-pane" id="comp-{{k.name}}" role="tabpanel" aria-labelledby="{{k.name}}-tab" tabindex="0">{{k.data|safe}}</div>
+      {% endfor %}
+    </div>
+
+    <div class="text-center mt-4">
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+          Add Graph
+      </button>
+
+      <button type="button" class="btn btn-danger" onclick="deleteGraph()" data-bs-target="#staticBackdrop">
+          Delete Graph
+      </button>
+
+                <!-- Modal -->
+      <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"
+          tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+          <div class="modal-dialog">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Graph</h1>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal"
+                          aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                      <div class="bar mt-4">
+                          <form action="" method="post" class="graphForm g-5">
+                              <select name="chart-type" class="form-select rounded-5 mt-2" id="chart-type" onchange="checkScatter()">
+                                  <option value="-1" selected>Choose Graph</option>
+                                  <option value="1">Bar Graph</option>
+                                  <option value="2">Scatter Plot</option>
+                                  <option value="3">Pie chart</option>
+                                  <option value="4">Histogram</option>
+                                  <option value="5">Violin Plot</option>
+<!--                                            <option value="6">Word Cloud</option>-->
+                                  <option value="6">Box Plot</option>
+                                  <option value="7">Line Plot</option>
+                              </select>
+                              <div class="form-check form-switch d-none my-3 d-flex justify-content-center">
+                                  <input class="form-check-input mx-3" name="add_regression" type="checkbox" role="switch" id="addRegression">
+                                  <label class="form-check-label" for="addRegression">Add regression line</label>
+                                </div>
+                              <select name="x-col" class="form-select mt-2 rounded-5" aria-label="Default select example">
+                                  <option selected>Select column for x-axis</option>
+                                  {% for c in cols %}
+                                  <option value="{{c}}">{{c}}</option>
+                                  {% endfor %}
+                              </select>
+                              <select name="y-col" id="y-col" class="form-select mt-2 rounded-5" aria-label="Default select example">
+                                  <option selected>Select column for y-axis</option>
+                                  {% for c in num_cols %}
+                                  <option value="{{c}}">{{c}}</option>
+                                  {% endfor %}
+                              </select>
+                              <input name="title" class="form-control mt-2 rounded-5 " type="text" placeholder="Enter the title for graph">
+
+                              <select name="color" class="form-select mt-2 rounded-5" aria-label="Default select example">
+                                  <option value="0" selected>Select color as a parameter (optional)</option>
+                                  {% for c in cat_cols %}
+                                  <option value="{{c}}">{{c}}</option>
+                                  {% endfor %}
+                              </select>
+
+                              <button type="submit" class="addBtn btn btn-primary mt-3">Add</button>
+                          </form>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+{% endblock %}
+{% block js %}
+<script>
+  const first_link = document.querySelector(".tabs");
+  first_link.click();
+
+  function deleteGraph(){
+    const currGraph = document.querySelector(".nav-link.tabs.active");
+    if (currGraph){
+        let url = `/delete-comp/{{dashboard_name}}/${currGraph.dataset.id}`;
+        fetch(url);
+        location.reload();
+    }
+  }
+</script>
+{% endblock %}

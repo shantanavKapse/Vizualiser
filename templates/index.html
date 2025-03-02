@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Vizualiser{% endblock %}
+
+{% block body %}
+<section class="container d-flex flex-column align-items-center justify-content-center" id="welcome-div" data-bs-theme="dark">
+    <h1 class="mb-5">Welcome to Vizualiser</h1>
+
+    <p class="fs-3 mt-5">Simpler way to <strong>visualize</strong>.</p>
+
+    <a href="#create-dashboard" class="create-dash-link text-decoration-none fs-4 text-white bg-primary-subtle p-3 border border-primary-subtle rounded-pill mt-5">Create Your Dashboard <i class="bi bi-pen"></i></a>
+
+
+<!--    <div class="spinner-grow" role="status" style="display: none;">-->
+<!--      <span class="visually-hidden">Loading...</span>-->
+<!--    </div>-->
+
+<!--    <div class="main-container d-flex w-100">-->
+<!--        <ul class="nav nav-tabs d-flex flex-column bg-success rounded h-100 border border-light">-->
+<!--            <li class="nav-item">-->
+<!--                <button onclick="changeTab(event)" class="nav-link text-light fs-2 w-100 active" data-tab_id="data-div">Dataset</button>-->
+<!--            </li>-->
+
+<!--            <li class="nav-item">-->
+<!--                <button onclick="changeTab(event)" class="nav-link text-light fs-2 w-100" data-tab_id="heatmap-div">Correlation Heatmap</button>-->
+<!--            </li>-->
+<!--        </ul>-->
+
+<!--        <div class="content p-5 card tab-content">-->
+<!--            <div class="data-rep overflow-auto tab-pane fade show active" id="data-div">-->
+<!--            </div>-->
+
+<!--            <div class="heatmap-div tab-pane fade" id="heatmap-div">-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+</section>
+<section class="d-flex flex-column align-items-center my-5" id="create-dashboard">
+    <form action="/" method="POST" enctype="multipart/form-data">
+        <h2 class="fs-1 my-5">Create Your Dashboard</h2>
+        <div class="create-dash-cont d-flex flex-column card bg-dark-subtle shadow my-5 p-3">
+            <input type="text" class="form-control" name="dashboard-name" placeholder="Dashboard Name">
+            <div class="file-input my-4" id="file-form">
+                <p>Select a dataset file(.csv)</p>
+                <input type="file" class="form-control" name="data-input" id="data-input" accept="text/csv">
+            </div>
+            <button class="btn btn-light w-50 align-self-center my-4" type="submit">Create Dashboard<i class="bi bi-arrow-right px-2"></i></button>
+        </div>
+    </form>
+</section>
+{% endblock %}
